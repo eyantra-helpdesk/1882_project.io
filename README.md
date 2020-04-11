@@ -1,61 +1,61 @@
 # 1882_project.io
 
-#include<readiness_io.h>
-#include<Ticker.h>
-#include"config.h"<br/>
-
-constint LED_PIN = 5; // The pin connecting the LED (D3)
-constint INTERRUPT1_PIN = 14; // The pin connects the test button (D5)
-constint INTERRUPT2_PIN = 12; // The pin connects the 2nd test button (D6)
-constint SOLENOID_PIN = 13; // The pin connects to the relay (D7)
-volatile byte interrupt = 0;
-readiness_io client(CHANNEL_ID, TOPIC, SENSOR_ID, VERSION, FORMAT);
-Ticker timer;
-
-voidbutton1Interrupt() {
-digitalWrite(LED_PIN, HIGH);
-digitalWrite(SOLENOID_PIN, HIGH);
-}
-
-voidbutton2Interrupt() {
-digitalWrite(LED_PIN, LOW);
-digitalWrite(SOLENOID_PIN, LOW);
-}
-/* Interrupt timer for collecting data to the Readiness.io server */
-voidreadFromServer(){
-interrupt++;
-}
-voidsetup() {
-pinMode(LED_PIN, OUTPUT);
-pinMode(BUILTIN_LED, OUTPUT);
-pinMode(SOLENOID_PIN, OUTPUT);
-digitalWrite(SOLENOID_PIN, HIGH);
-digitalWrite(BUILTIN_LED, HIGH); // internal LED is switched on when low - so we have to switch it off/
-Serial.begin(115200);
-Serial.setTimeout(2000);
-while(!Serial) { } // Wait for serial to initialize.
-Serial.println("Device Started");
-Serial.print("Connecting to ");
-Serial.println(WIFI_SSID);
-client.wifiConnection(WIFI_SSID, WIFI_PASS);
-pinMode(INTERRUPT1_PIN, INPUT);
-pinMode(INTERRUPT2_PIN, INPUT);
-attachInterrupt(digitalPinToInterrupt(INTERRUPT2_PIN), button2Interrupt, RISING); // Attach the interrupt.
-attachInterrupt(digitalPinToInterrupt(INTERRUPT1_PIN), button1Interrupt, RISING); // Attach the interrupt.
-timer.attach(UPDATE_RATE, readFromServer);
-client.testConnection();
-}
-voidloop() {
-if(interrupt>0){
-String result = client.subscribe(LISTEN_TOPIC);
-float reading = client.getReading(result);
-if (reading == 0) {
-digitalWrite(SOLENOID_PIN, HIGH);
-digitalWrite(LED_PIN,HIGH);
-} else {
-digitalWrite(SOLENOID_PIN, LOW);
-digitalWrite(LED_PIN,LOW);
-}
-interrupt=0;
-}
-}
+#include<readiness_io.h><br/><br/>
+#include<Ticker.h><br/><br/>
+#include"config.h"<br/><br/><br/>
+<br/><br/>
+constint LED_PIN = 5; // The pin connecting the LED (D3)<br/><br/>
+constint INTERRUPT1_PIN = 14; // The pin connects the test button (D5)<br/><br/>
+constint INTERRUPT2_PIN = 12; // The pin connects the 2nd test button (D6)<br/><br/>
+constint SOLENOID_PIN = 13; // The pin connects to the relay (D7)<br/><br/>
+volatile byte interrupt = 0;<br/><br/>
+readiness_io client(CHANNEL_ID, TOPIC, SENSOR_ID, VERSION, FORMAT);<br/><br/>
+Ticker timer;<br/><br/>
+<br/><br/>
+voidbutton1Interrupt() {<br/><br/>
+digitalWrite(LED_PIN, HIGH);<br/><br/>
+digitalWrite(SOLENOID_PIN, HIGH);<br/><br/>
+}<br/><br/>
+<br/><br/>
+voidbutton2Interrupt() {<br/><br/>
+digitalWrite(LED_PIN, LOW);<br/><br/>
+digitalWrite(SOLENOID_PIN, LOW);<br/><br/>
+}<br/><br/>
+/* Interrupt timer for collecting data to the Readiness.io server */<br/><br/>
+voidreadFromServer(){<br/><br/>
+interrupt++;<br/><br/>
+}<br/><br/>
+voidsetup() {<br/><br/>
+pinMode(LED_PIN, OUTPUT);<br/><br/>
+pinMode(BUILTIN_LED, OUTPUT);<br/><br/>
+pinMode(SOLENOID_PIN, OUTPUT);<br/><br/>
+digitalWrite(SOLENOID_PIN, HIGH);<br/><br/>
+digitalWrite(BUILTIN_LED, HIGH); // internal LED is switched on when low - so we have to switch it off/<br/><br/>
+Serial.begin(115200);<br/><br/>
+Serial.setTimeout(2000);<br/><br/>
+while(!Serial) { } // Wait for serial to initialize.<br/><br/>
+Serial.println("Device Started");<br/><br/>
+Serial.print("Connecting to ");<br/><br/>
+Serial.println(WIFI_SSID);<br/><br/>
+client.wifiConnection(WIFI_SSID, WIFI_PASS);<br/><br/>
+pinMode(INTERRUPT1_PIN, INPUT);<br/><br/>
+pinMode(INTERRUPT2_PIN, INPUT);<br/><br/>
+attachInterrupt(digitalPinToInterrupt(INTERRUPT2_PIN), button2Interrupt, RISING); // Attach the interrupt.<br/><br/>
+attachInterrupt(digitalPinToInterrupt(INTERRUPT1_PIN), button1Interrupt, RISING); // Attach the interrupt.<br/><br/>
+timer.attach(UPDATE_RATE, readFromServer);<br/><br/>
+client.testConnection();<br/><br/>
+}<br/><br/>
+voidloop() {<br/><br/>
+if(interrupt>0){<br/><br/>
+String result = client.subscribe(LISTEN_TOPIC);<br/><br/>
+float reading = client.getReading(result);<br/><br/>
+if (reading == 0) {<br/><br/>
+digitalWrite(SOLENOID_PIN, HIGH);<br/><br/>
+digitalWrite(LED_PIN,HIGH);<br/><br/>
+} else {<br/><br/>
+digitalWrite(SOLENOID_PIN, LOW);<br/><br/>
+digitalWrite(LED_PIN,LOW);<br/><br/>
+}<br/><br/>
+interrupt=0;<br/><br/>
+}<br/><br/>
+}<br/><br/>
